@@ -271,12 +271,19 @@ function mountAnimationDemo() {
     render.canvas.width = width;
     render.canvas.height = height;
 
-    Composite.remove(world, [ground, ceiling, leftWall, rightWall]);
+    Composite.remove(world, ground);
+    Composite.remove(world, ceiling);
+    Composite.remove(world, leftWall);
+    Composite.remove(world, rightWall);
+
     ground = Bodies.rectangle(width / 2, height + 25, width, 50, wallOptions);
     ceiling = Bodies.rectangle(width / 2, -25, width, 50, wallOptions);
     leftWall = Bodies.rectangle(-25, height / 2, 50, height, wallOptions);
     rightWall = Bodies.rectangle(width + 25, height / 2, 50, height, wallOptions);
     Composite.add(world, [ground, ceiling, leftWall, rightWall]);
+
+    render.bounds.min.x = 0;
+    render.bounds.min.y = 0;
   };
 
   window.addEventListener('resize', resizeHandler, { passive: true });
