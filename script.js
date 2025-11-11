@@ -67,24 +67,56 @@ if (toggle) {
 
 // ========== Placeholder Mounts ==========
 function mountAnimationDemo() {
-  const container =
+  const mount =
     document.getElementById('animationContainer') ||
     document.getElementById('animationMount');
-  if (!container || typeof Matter === 'undefined') return;
+  if (!mount) return;
+
+  const runFallback = () => {
+    if (mount.dataset.fallbackInit === '1') return;
+    mount.dataset.fallbackInit = '1';
+
+    mount.innerHTML = '';
+    const dot = document.createElement('div');
+    dot.style.width = '16px';
+    dot.style.height = '16px';
+    dot.style.borderRadius = '50%';
+    dot.style.background = 'var(--accent)';
+    dot.style.position = 'relative';
+    dot.style.left = '0';
+    dot.style.transition = 'left 400ms linear';
+    mount.appendChild(dot);
+
+    let dir = 1;
+    setInterval(() => {
+      const max = mount.clientWidth - 16;
+      const current = parseFloat(dot.style.left) || 0;
+      let next = current + dir * 24;
+      if (next <= 0 || next >= max) dir *= -1;
+      dot.style.left = Math.max(0, Math.min(max, next)) + 'px';
+    }, 450);
+  };
+
+  if (typeof Matter === 'undefined') {
+    runFallback();
+    return;
+  }
+
+  const stage = mount;
+  delete stage.dataset.fallbackInit;
+  stage.innerHTML = '';
 
   const { Engine, Render, Runner, Bodies, Composite, Mouse, MouseConstraint, Events, Body } = Matter;
 
-  container.innerHTML = '';
-
-  let width = container.clientWidth || container.offsetWidth || 640;
-  let height = container.clientHeight || container.offsetHeight || 400;
+  let width = stage.clientWidth || stage.offsetWidth || 640;
+  let height = stage.clientHeight || stage.offsetHeight || 400;
 
   const engine = Engine.create();
   const world = engine.world;
   world.gravity.y = 0.5;
 
   const render = Render.create({
-    element: container,
+    element: stage,
     engine,
     options: {
       width,
@@ -106,7 +138,7 @@ function mountAnimationDemo() {
   const overlay = document.createElement('div');
   overlay.className = 'animation-overlay';
   overlay.setAttribute('aria-hidden', 'true');
-  container.appendChild(overlay);
+  stage.appendChild(overlay);
 
   const wallOptions = { isStatic: true, render: { fillStyle: 'transparent' } };
   let ground = Bodies.rectangle(width / 2, height + 25, width, 50, wallOptions);
@@ -155,7 +187,7 @@ function mountAnimationDemo() {
   const spawnRangeY = Math.max(height * 0.55, 220);
   const spawnBaseY = Math.max(height * 0.1, 60);
 
-  shapeData.forEach((data, i) => {
+  shapeData.forEach((data) => {
     const x = Math.random() * (width - 200) + 100;
     const y = spawnBaseY + Math.random() * spawnRangeY;
     const w = getTextWidth(data.text);
@@ -169,7 +201,7 @@ function mountAnimationDemo() {
       density: 0.001,
       render: {
         fillStyle: 'transparent',
-        strokeStyle: getComputedStyle(container).getPropertyValue('--fg') || '#000',
+        strokeStyle: getComputedStyle(stage).getPropertyValue('--fg') || '#000',
         lineWidth: 2
       }
     });
@@ -190,7 +222,7 @@ function mountAnimationDemo() {
     Composite.add(world, shape);
   });
 
-  imageData.forEach((data, i) => {
+  imageData.forEach((data) => {
     const x = Math.random() * (width - 200) + 100;
     const y = spawnBaseY + Math.random() * spawnRangeY;
 
@@ -267,8 +299,8 @@ function mountAnimationDemo() {
   updateOverlays();
 
   const resizeHandler = () => {
-    width = container.clientWidth || container.offsetWidth || width;
-    height = container.clientHeight || container.offsetHeight || height;
+    width = stage.clientWidth || stage.offsetWidth || width;
+    height = stage.clientHeight || stage.offsetHeight || height;
 
     render.options.width = width;
     render.options.height = height;
