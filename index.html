@@ -13,6 +13,7 @@
 
     <!-- Styles -->
     <link rel="stylesheet" href="styles.css" />
+    <link href="https://fonts.googleapis.com/css2?family=Space+Mono:wght@400;700&display=swap" rel="stylesheet" />
   </head>
   <body>
     <!-- Page wrapper keeps max-width and padding consistent -->
@@ -49,7 +50,9 @@
       <section id="animation" class="section"
         style="--section-bg:transparent; --section-fg:var(--fg);">
         <div class="block-title">animation</div>
-        <div id="animationMount" class="custom-mount" aria-live="polite"></div>
+        <div class="animation-shell" aria-live="polite">
+          <div id="animationContainer" class="animation-stage" role="presentation"></div>
+        </div>
       </section>
 
       <!-- 4) MARQUEE (baseline) -->
@@ -148,6 +151,7 @@
     </div>
 
     <!-- Scripts -->
-    <script src="script.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/matter-js/0.19.0/matter.min.js" defer></script>
+    <script src="script.js" defer></script>
   </body>
 </html>
