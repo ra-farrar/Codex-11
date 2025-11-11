@@ -79,7 +79,7 @@ html[data-debug="1"] .app,
 html[data-debug="1"] .btn             { outline:2px dashed rgba(var(--ol-orange),.6); }
 
 /* Shared sections */
-.section--box{border:1px solid var(--border)}
+.section--box{border:var(--section-border,0)}
 .block-title{font-weight:600;font-size:var(--size-sm);letter-spacing:.06em;text-transform:uppercase;color:var(--fg-muted);margin-bottom:10px}
 
 /* Headings & Text */
