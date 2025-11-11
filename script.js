@@ -264,12 +264,30 @@ function mountAnimationDemo() {
     width = container.clientWidth || container.offsetWidth || width;
     height = container.clientHeight || container.offsetHeight || height;
 
-    render.bounds.max.x = width;
-    render.bounds.max.y = height;
     render.options.width = width;
     render.options.height = height;
-    render.canvas.width = width;
-    render.canvas.height = height;
+
+    if (render.canvas) {
+      render.canvas.width = width;
+      render.canvas.height = height;
+    }
+
+    if (render.bounds) {
+      render.bounds.max.x = width;
+      render.bounds.max.y = height;
+      render.bounds.min.x = 0;
+      render.bounds.min.y = 0;
+    } else {
+      render.options.bounds = {
+        min: { x: 0, y: 0 },
+        max: { x: width, y: height }
+      };
+    }
+
+    Render.lookAt(render, {
+      min: { x: 0, y: 0 },
+      max: { x: width, y: height }
+    });
 
     Composite.remove(world, ground);
     Composite.remove(world, ceiling);
@@ -281,9 +299,6 @@ function mountAnimationDemo() {
     leftWall = Bodies.rectangle(-25, height / 2, 50, height, wallOptions);
     rightWall = Bodies.rectangle(width + 25, height / 2, 50, height, wallOptions);
     Composite.add(world, [ground, ceiling, leftWall, rightWall]);
-
-    render.bounds.min.x = 0;
-    render.bounds.min.y = 0;
   };
 
   window.addEventListener('resize', resizeHandler, { passive: true });
