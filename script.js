@@ -67,7 +67,9 @@ if (toggle) {
 
 // ========== Placeholder Mounts ==========
 function mountAnimationDemo() {
-  const container = document.getElementById('animationContainer');
+  const container =
+    document.getElementById('animationContainer') ||
+    document.getElementById('animationMount');
   if (!container || typeof Matter === 'undefined') return;
 
   const { Engine, Render, Runner, Bodies, Composite, Mouse, MouseConstraint, Events, Body } = Matter;
@@ -96,6 +98,10 @@ function mountAnimationDemo() {
   Render.run(render);
   const runner = Runner.create();
   Runner.run(runner, engine);
+
+  if (render.canvas) {
+    render.canvas.setAttribute('aria-hidden', 'true');
+  }
 
   const overlay = document.createElement('div');
   overlay.className = 'animation-overlay';
@@ -302,6 +308,7 @@ function mountAnimationDemo() {
   };
 
   window.addEventListener('resize', resizeHandler, { passive: true });
+  resizeHandler();
 
   if (mouse.element) {
     mouse.element.removeEventListener('mousewheel', mouse.mousewheel);
