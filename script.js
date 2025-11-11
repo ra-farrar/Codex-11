@@ -67,27 +67,207 @@ if (toggle) {
 
 // ========== Placeholder Mounts ==========
 function mountAnimationDemo() {
-  const el = document.getElementById('animationMount');
-  if (!el) return;
-  el.innerHTML = '';
-  const dot = document.createElement('div');
-  dot.style.width = '16px';
-  dot.style.height = '16px';
-  dot.style.borderRadius = '50%';
-  dot.style.background = 'var(--accent)';
-  dot.style.position = 'relative';
-  dot.style.left = '0';
-  dot.style.transition = 'left 400ms linear';
-  el.appendChild(dot);
+  const container = document.getElementById('animationContainer');
+  if (!container || typeof Matter === 'undefined') return;
 
-  let dir = 1;
-  setInterval(() => {
-    const max = el.clientWidth - 16;
-    const current = parseFloat(dot.style.left) || 0;
-    let next = current + dir * 24;
-    if (next <= 0 || next >= max) dir *= -1;
-    dot.style.left = Math.max(0, Math.min(max, next)) + 'px';
-  }, 450);
+  const { Engine, Render, Runner, Bodies, Composite, Mouse, MouseConstraint, Events, Body } = Matter;
+
+  container.innerHTML = '';
+
+  let width = container.clientWidth || container.offsetWidth || 640;
+  let height = container.clientHeight || container.offsetHeight || 400;
+
+  const engine = Engine.create();
+  const world = engine.world;
+  world.gravity.y = 0.5;
+
+  const render = Render.create({
+    element: container,
+    engine,
+    options: {
+      width,
+      height,
+      wireframes: false,
+      background: 'transparent',
+      pixelRatio: window.devicePixelRatio || 1
+    }
+  });
+
+  Render.run(render);
+  const runner = Runner.create();
+  Runner.run(runner, engine);
+
+  const overlay = document.createElement('div');
+  overlay.className = 'animation-overlay';
+  overlay.setAttribute('aria-hidden', 'true');
+  container.appendChild(overlay);
+
+  const wallOptions = { isStatic: true, render: { fillStyle: 'transparent' } };
+  let ground = Bodies.rectangle(width / 2, height + 25, width, 50, wallOptions);
+  let leftWall = Bodies.rectangle(-25, height / 2, 50, height, wallOptions);
+  let rightWall = Bodies.rectangle(width + 25, height / 2, 50, height, wallOptions);
+  Composite.add(world, [ground, leftWall, rightWall]);
+
+  const shapeData = [
+    { text: 'Design' },
+    { text: 'Code' },
+    { text: 'Create' },
+    { text: 'Build' },
+    { text: 'Launch' },
+    { text: 'Innovate' },
+    { text: 'Dream' },
+    { text: 'Explore' }
+  ];
+
+  const imageData = [
+    {
+      src: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9IiMwMDAwRkYiLz48cGF0aCBkPSJNMjAgNzVMMjAgMjVNMjAgNzVMODAgNzVNMzUgNjBMMzUgNDBNNTAgNjBMNTAgMzBNNjUgNjBMNjUgNDUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PGNpcmNsZSBjeD0iMzUiIGN5PSI0MCIgcj0iNCIgZmlsbD0id2hpdGUiLz48Y2lyY2xlIGN4PSI1MCIgY3k9IjMwIiByPSI0IiBmaWxsPSJ3aGl0ZSIvPjxjaXJjbGUgY3g9IjY1IiBjeT0iNDUiIHI9IjQiIGZpbGw9IndoaXRlIi8+PHBhdGggZD0iTTM1IDQwTDUwIDMwTTUwIDMwTDY1IDQ1IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiLz48Y2lyY2xlIGN4PSI1NSIgY3k9IjQ1IiByPSIxMiIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIzIiBmaWxsPSJub25lIi8+PHBhdGggZD0iTTYzIDM4TDcyIDI5TTcyIDI5TDc1IDMyTTcyIDI5TDY5IDI2IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==',
+      width: 60,
+      height: 60
+    },
+    {
+      src: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9IiMwMDAwRkYiLz48cGF0aCBkPSJNNTAgMjVWMzBNMzAgMzBMMzQgMzRNNzAgMzBMNjYgMzRNMjUgNTBIMzBNNzAgNTBINzUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PHBhdGggZD0iTTQwIDQ1QzQwIDM5LjQ3NzIgNDQuNDc3MiAzNSA1MCAzNUM1NS41MjI4IDM1IDYwIDM5LjQ3NzIgNjAgNDVDNjAgNDguNSA1OCA1Mi41IDU1IDU1SDQ1QzQyIDUyLjUgNDAgNDguNSA0MCA0NVoiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMyIgZmlsbD0ibm9uZSIvPjxwYXRoIGQ9Ik00NSA1NUg1NU00MyA2MEg1N000NSA2NUg1NSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIzIiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48cGF0aCBkPSJNNDcgNDJMNTMgNDgiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMi41IiBzdHJva2UtbGluZWNhcD0icm91bmQiLz48L3N2Zz4=',
+      width: 60,
+      height: 60
+    },
+    {
+      src: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9IiMwMDAwRkYiLz48cGF0aCBkPSJNNTAgMjBDNDUgMjUgNDAgMzUgNDAgNDVDNDAgNTUgNDUgNjAgNTAgNjVDNTUgNjAgNjAgNTUgNjAgNDVDNjAgMzUgNTUgMjUgNTAgMjBaIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjMiIGZpbGw9Im5vbmUiLz48Y2lyY2xlIGN4PSI1MCIgY3k9IjM1IiByPSI1IiBmaWxsPSJ3aGl0ZSIvPjxwYXRoIGQ9Ik40MCA0NUwzNSA1NUwzOCA1NVoiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMyIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik02MCA0NUw2NSA1NUw2MiA1NVoiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMyIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik00NSA2NUw0MCA3MEM0MCA3NSA0NSA3OCA1MCA3OEM1NSA3OCA2MCA3NSA2MCA3MEw1NSA2NSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIzIiBmaWxsPSJub25lIi8+PHBhdGggZD0iTTQ1IDY1SDU1IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0zNSA3MEMzMiA3MiAzMCA3NSAzMiA3N0MzNCA3OSAzNyA3NyA0MCA3NSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIGZpbGw9Im5vbmUiLz48cGF0aCBkPSJNNjUgNzBDNjggNzIgNzAgNzUgNjggNzdDNjYgNzkgNjMgNzcgNjAgNzUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBmaWxsPSJub25lIi8+PHBhdGggZD0iTTQ1IDcyTDQ3IDc1TTUwIDcyTDUwIDc2TTU1IDcyTDUzIDc1IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==',
+      width: 60,
+      height: 60
+    }
+  ];
+
+  const shapes = [];
+  const labels = [];
+  const images = [];
+
+  function getTextWidth(text) {
+    return text.length * 10 + 40;
+  }
+
+  shapeData.forEach((data, i) => {
+    const x = Math.random() * (width - 200) + 100;
+    const y = -100 - (i * 80);
+    const w = getTextWidth(data.text);
+    const h = 50;
+    const cornerRadius = [0, 5, 10, 15, 20, 25][Math.floor(Math.random() * 6)];
+
+    const shape = Bodies.rectangle(x, y, w, h, {
+      chamfer: { radius: cornerRadius },
+      restitution: 0.9,
+      friction: 0.1,
+      density: 0.001,
+      render: {
+        fillStyle: 'transparent',
+        strokeStyle: getComputedStyle(container).getPropertyValue('--fg') || '#000',
+        lineWidth: 2
+      }
+    });
+
+    const label = document.createElement('div');
+    label.className = 'shape-label';
+    label.textContent = data.text;
+    overlay.appendChild(label);
+    labels.push(label);
+
+    shapes.push(shape);
+    Composite.add(world, shape);
+  });
+
+  imageData.forEach((data, i) => {
+    const x = Math.random() * (width - 200) + 100;
+    const y = -100 - ((shapeData.length + i) * 80);
+
+    const shape = Bodies.rectangle(x, y, data.width, data.height, {
+      chamfer: { radius: data.height / 2 },
+      restitution: 0.9,
+      friction: 0.1,
+      density: 0.001,
+      render: { fillStyle: 'transparent', strokeStyle: 'transparent', lineWidth: 0 }
+    });
+
+    const img = document.createElement('img');
+    img.className = 'shape-image';
+    img.src = data.src;
+    img.alt = '';
+    img.width = data.width;
+    img.height = data.height;
+    img.style.width = data.width + 'px';
+    img.style.height = data.height + 'px';
+    overlay.appendChild(img);
+    images.push(img);
+
+    shapes.push(shape);
+    Composite.add(world, shape);
+  });
+
+  const mouse = Mouse.create(render.canvas);
+  const mouseConstraint = MouseConstraint.create(engine, {
+    mouse,
+    constraint: { stiffness: 0.2, render: { visible: false } }
+  });
+  Composite.add(world, mouseConstraint);
+  render.mouse = mouse;
+
+  Events.on(mouseConstraint, 'mousemove', (event) => {
+    const mousePos = event.mouse.position;
+    shapes.forEach((shape) => {
+      const dx = shape.position.x - mousePos.x;
+      const dy = shape.position.y - mousePos.y;
+      const distance = Math.sqrt(dx * dx + dy * dy);
+      if (distance < 150) {
+        const force = 0.008;
+        const randomForce = { x: (Math.random() - 0.5) * force, y: (Math.random() - 0.5) * force };
+        Body.applyForce(shape, shape.position, randomForce);
+        Body.setAngularVelocity(shape, shape.angularVelocity + (Math.random() - 0.5) * 0.3);
+      }
+    });
+  });
+
+  const updateOverlays = () => {
+    for (let i = 0; i < shapeData.length; i++) {
+      const label = labels[i];
+      const shape = shapes[i];
+      label.style.left = shape.position.x + 'px';
+      label.style.top = shape.position.y + 'px';
+      label.style.transform = `translate(-50%, -50%) rotate(${shape.angle}rad)`;
+    }
+    for (let i = 0; i < imageData.length; i++) {
+      const img = images[i];
+      const shape = shapes[shapeData.length + i];
+      img.style.left = shape.position.x + 'px';
+      img.style.top = shape.position.y + 'px';
+      img.style.transform = `translate(-50%, -50%) rotate(${shape.angle}rad)`;
+    }
+  };
+
+  Events.on(engine, 'afterUpdate', updateOverlays);
+  updateOverlays();
+
+  const resizeHandler = () => {
+    width = container.clientWidth || container.offsetWidth || width;
+    height = container.clientHeight || container.offsetHeight || height;
+
+    render.bounds.max.x = width;
+    render.bounds.max.y = height;
+    render.options.width = width;
+    render.options.height = height;
+    render.canvas.width = width;
+    render.canvas.height = height;
+
+    Composite.remove(world, [ground, leftWall, rightWall]);
+    ground = Bodies.rectangle(width / 2, height + 25, width, 50, wallOptions);
+    leftWall = Bodies.rectangle(-25, height / 2, 50, height, wallOptions);
+    rightWall = Bodies.rectangle(width + 25, height / 2, 50, height, wallOptions);
+    Composite.add(world, [ground, leftWall, rightWall]);
+  };
+
+  window.addEventListener('resize', resizeHandler, { passive: true });
+
+  if (mouse.element) {
+    mouse.element.removeEventListener('mousewheel', mouse.mousewheel);
+    mouse.element.removeEventListener('DOMMouseScroll', mouse.mousewheel);
+  }
 }
 function mountExperienceDemo() {
   const el = document.getElementById('experienceMount');
