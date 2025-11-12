@@ -158,7 +158,9 @@ html[data-debug="1"] #animation .animation-stage::after {
 #animation .animation-stage{
   position:relative;
   width:100%;
-  height:clamp(320px,55vh,540px);
+  inline-size:100%;
+  max-inline-size:100%;
+  height:clamp(220px,48vh,380px);
   background:linear-gradient(135deg,rgba(255,255,255,0.4),rgba(255,255,255,0)) , var(--elev);
   border-radius:14px;
   overflow:hidden;
@@ -192,12 +194,8 @@ html[data-theme="dark"] #animation .animation-stage{
   pointer-events:none;
   user-select:none;
 }
-@media (max-width:768px){
-  #animation .animation-stage{height:clamp(260px,52vh,460px);}
-}
 @media (max-width:480px){
   #animation .animation-shell{padding:clamp(10px,4vw,16px);}
-  #animation .animation-stage{height:clamp(220px,48vh,380px);}
 }
 
 /* Reduced motion */
