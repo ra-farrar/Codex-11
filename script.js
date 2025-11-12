@@ -131,14 +131,12 @@ function mountAnimationDemo() {
   addBounds();
 
   const shapeData = [
-    { text: 'Design' },
-    { text: 'Code' },
-    { text: 'Create' },
-    { text: 'Build' },
-    { text: 'Launch' },
-    { text: 'Innovate' },
-    { text: 'Dream' },
-    { text: 'Explore' }
+    { text: 'PAID SOCIAL' },
+    { text: 'PAID DISPLAY' },
+    { text: 'OPTIMIZATION' },
+    { text: 'STRATEGY' },
+    { text: 'B2B & B2C' },
+    { text: 'GO-TO-MARKET' }
   ];
 
   const imageData = [
