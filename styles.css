@@ -152,7 +152,7 @@ html[data-debug="1"] #animation .animation-stage::after {
   border:none;
   border-radius:18px;
   padding:clamp(12px,2vw,20px);
-  background:var(--muted);
+  background:transparent;
   position:relative;
 }
 #animation .animation-stage{
