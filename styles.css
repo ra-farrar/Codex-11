@@ -67,6 +67,24 @@ p,h1,h2,h3,h4,h5,h6{margin:0}
 .page{max-width:1100px;margin:0 auto;padding:24px 20px 64px}
 .section{background:var(--section-bg,transparent);color:var(--section-fg,var(--fg));border-radius:var(--section-radius,0px);padding:clamp(16px,3vw,28px);margin-block:clamp(10px,2vw,20px);border:var(--section-border,1px solid transparent)}
 
+/* In dark mode keep hero containers transparent so the background is continuous */
+html[data-theme="dark"] #header,
+html[data-theme="dark"] #subhead,
+html[data-theme="dark"] #cta {
+  background: transparent;
+  --section-bg: transparent;
+  --section-border: 1px solid transparent;
+}
+@media (prefers-color-scheme: dark) {
+  html[data-theme="auto"] #header,
+  html[data-theme="auto"] #subhead,
+  html[data-theme="auto"] #cta {
+    background: transparent;
+    --section-bg: transparent;
+    --section-border: 1px solid transparent;
+  }
+}
+
 /* === Debug outlines (MOBILE system) ===
    Toggle with `D`. Nothing renders unless html[data-debug="1"] is set. */
 html[data-debug="1"] .section        { outline:2px dashed rgba(var(--ol-blue),.9); }
@@ -167,7 +185,12 @@ html[data-debug="1"] #animation .animation-stage::after {
   cursor:crosshair;
 }
 html[data-theme="dark"] #animation .animation-stage{
-  background:linear-gradient(135deg,rgba(20,20,20,0.6),rgba(20,20,20,0)) , var(--muted);
+  background:transparent;
+}
+@media (prefers-color-scheme: dark) {
+  html[data-theme="auto"] #animation .animation-stage {
+    background: transparent;
+  }
 }
 #animation .animation-stage canvas{display:block}
 #animation .animation-overlay{
