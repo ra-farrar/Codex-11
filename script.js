@@ -102,11 +102,32 @@ function mountAnimationDemo() {
   overlay.setAttribute('aria-hidden', 'true');
   container.appendChild(overlay);
 
-  const wallOptions = { isStatic: true, render: { fillStyle: 'transparent' } };
-  let ground = Bodies.rectangle(width / 2, height + 25, width, 50, wallOptions);
-  let leftWall = Bodies.rectangle(-25, height / 2, 50, height, wallOptions);
-  let rightWall = Bodies.rectangle(width + 25, height / 2, 50, height, wallOptions);
-  Composite.add(world, [ground, leftWall, rightWall]);
+  const wallOptions = {
+    isStatic: true,
+    friction: 0,
+    frictionStatic: 0,
+    restitution: 0.9,
+    render: { fillStyle: 'transparent' }
+  };
+  let ground;
+  let ceiling;
+  let leftWall;
+  let rightWall;
+
+  const wallThickness = 80;
+  const wallHeightBuffer = 160;
+
+  function addBounds() {
+    const halfThickness = wallThickness / 2;
+
+    ground = Bodies.rectangle(width / 2, height + halfThickness, width + wallThickness * 2, wallThickness, wallOptions);
+    ceiling = Bodies.rectangle(width / 2, -halfThickness, width + wallThickness * 2, wallThickness, wallOptions);
+    leftWall = Bodies.rectangle(-halfThickness, height / 2, wallThickness, height + wallHeightBuffer, wallOptions);
+    rightWall = Bodies.rectangle(width + halfThickness, height / 2, wallThickness, height + wallHeightBuffer, wallOptions);
+    Composite.add(world, [ground, ceiling, leftWall, rightWall]);
+  }
+
+  addBounds();
 
   const shapeData = [
     { text: 'Design' },
@@ -145,9 +166,12 @@ function mountAnimationDemo() {
     return text.length * 10 + 40;
   }
 
+  const spawnBand = Math.min(height * 0.35, 180);
+  const spawnOffset = 80;
+
   shapeData.forEach((data, i) => {
     const x = Math.random() * (width - 200) + 100;
-    const y = -100 - (i * 80);
+    const y = Math.random() * spawnBand + spawnOffset;
     const w = getTextWidth(data.text);
     const h = 50;
     const cornerRadius = [0, 5, 10, 15, 20, 25][Math.floor(Math.random() * 6)];
@@ -176,7 +200,7 @@ function mountAnimationDemo() {
 
   imageData.forEach((data, i) => {
     const x = Math.random() * (width - 200) + 100;
-    const y = -100 - ((shapeData.length + i) * 80);
+    const y = Math.random() * spawnBand + spawnOffset;
 
     const shape = Bodies.rectangle(x, y, data.width, data.height, {
       chamfer: { radius: data.height / 2 },
@@ -241,7 +265,36 @@ function mountAnimationDemo() {
     }
   };
 
+  const keepInsideBounds = () => {
+    const padding = 4;
+    const minX = padding;
+    const maxX = width - padding;
+    const minY = padding;
+    const maxY = height - padding;
+
+    shapes.forEach((shape) => {
+      const halfWidth = (shape.bounds.max.x - shape.bounds.min.x) / 2;
+      const halfHeight = (shape.bounds.max.y - shape.bounds.min.y) / 2;
+
+      let nextX = shape.position.x;
+      let nextY = shape.position.y;
+
+      if (shape.position.x - halfWidth < minX) nextX = minX + halfWidth;
+      else if (shape.position.x + halfWidth > maxX) nextX = maxX - halfWidth;
+
+      if (shape.position.y - halfHeight < minY) nextY = minY + halfHeight;
+      else if (shape.position.y + halfHeight > maxY) nextY = maxY - halfHeight;
+
+      if (nextX !== shape.position.x || nextY !== shape.position.y) {
+        Body.setPosition(shape, { x: nextX, y: nextY });
+        Body.setVelocity(shape, { x: 0, y: 0 });
+        Body.setAngularVelocity(shape, 0);
+      }
+    });
+  };
+
   Events.on(engine, 'afterUpdate', updateOverlays);
+  Events.on(engine, 'beforeUpdate', keepInsideBounds);
   updateOverlays();
 
   const resizeHandler = () => {
@@ -255,11 +308,12 @@ function mountAnimationDemo() {
     render.canvas.width = width;
     render.canvas.height = height;
 
-    Composite.remove(world, [ground, leftWall, rightWall]);
-    ground = Bodies.rectangle(width / 2, height + 25, width, 50, wallOptions);
-    leftWall = Bodies.rectangle(-25, height / 2, 50, height, wallOptions);
-    rightWall = Bodies.rectangle(width + 25, height / 2, 50, height, wallOptions);
-    Composite.add(world, [ground, leftWall, rightWall]);
+    [ground, ceiling, leftWall, rightWall].forEach((body) => {
+      if (body) Composite.remove(world, body);
+    });
+
+    addBounds();
+    keepInsideBounds();
   };
 
   window.addEventListener('resize', resizeHandler, { passive: true });
