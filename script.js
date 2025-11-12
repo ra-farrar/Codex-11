@@ -67,16 +67,16 @@ if (toggle) {
 
 // ========== Placeholder Mounts ==========
 function mountAnimationDemo() {
-  const mount =
+  const stage =
     document.getElementById('animationContainer') ||
     document.getElementById('animationMount');
-  if (!mount) return;
+  if (!stage) return;
 
   const runFallback = () => {
-    if (mount.dataset.fallbackInit === '1') return;
-    mount.dataset.fallbackInit = '1';
+    if (stage.dataset.fallbackInit === '1') return;
+    stage.dataset.fallbackInit = '1';
+    stage.innerHTML = '';
 
-    mount.innerHTML = '';
     const dot = document.createElement('div');
     dot.style.width = '16px';
     dot.style.height = '16px';
@@ -85,11 +85,11 @@ function mountAnimationDemo() {
     dot.style.position = 'relative';
     dot.style.left = '0';
     dot.style.transition = 'left 400ms linear';
-    mount.appendChild(dot);
+    stage.appendChild(dot);
 
     let dir = 1;
     setInterval(() => {
-      const max = mount.clientWidth - 16;
+      const max = stage.clientWidth - 16;
       const current = parseFloat(dot.style.left) || 0;
       let next = current + dir * 24;
       if (next <= 0 || next >= max) dir *= -1;
@@ -102,18 +102,21 @@ function mountAnimationDemo() {
     return;
   }
 
-  const stage = mount;
   delete stage.dataset.fallbackInit;
   stage.innerHTML = '';
 
   const { Engine, Render, Runner, Bodies, Composite, Mouse, MouseConstraint, Events, Body } = Matter;
+
+  const overlay = document.createElement('div');
+  overlay.className = 'animation-overlay';
+  overlay.setAttribute('aria-hidden', 'true');
 
   let width = stage.clientWidth || stage.offsetWidth || 640;
   let height = stage.clientHeight || stage.offsetHeight || 400;
 
   const engine = Engine.create();
   const world = engine.world;
-  world.gravity.y = 0.5;
+  world.gravity.y = 0.75;
 
   const render = Render.create({
     element: stage,
@@ -122,8 +125,7 @@ function mountAnimationDemo() {
       width,
       height,
       wireframes: false,
-      background: 'transparent',
-      pixelRatio: window.devicePixelRatio || 1
+      background: 'transparent'
     }
   });
 
@@ -133,19 +135,33 @@ function mountAnimationDemo() {
 
   if (render.canvas) {
     render.canvas.setAttribute('aria-hidden', 'true');
+    render.canvas.style.position = 'absolute';
+    render.canvas.style.inset = '0';
   }
 
-  const overlay = document.createElement('div');
-  overlay.className = 'animation-overlay';
-  overlay.setAttribute('aria-hidden', 'true');
   stage.appendChild(overlay);
 
+  const walls = [];
   const wallOptions = { isStatic: true, render: { fillStyle: 'transparent' } };
-  let ground = Bodies.rectangle(width / 2, height + 25, width, 50, wallOptions);
-  let ceiling = Bodies.rectangle(width / 2, -25, width, 50, wallOptions);
-  let leftWall = Bodies.rectangle(-25, height / 2, 50, height, wallOptions);
-  let rightWall = Bodies.rectangle(width + 25, height / 2, 50, height, wallOptions);
-  Composite.add(world, [ground, ceiling, leftWall, rightWall]);
+  function rebuildWalls() {
+    while (walls.length) {
+      Composite.remove(world, walls.pop());
+    }
+    const thickness = 80;
+    const half = thickness / 2;
+    const newWalls = [
+      Bodies.rectangle(width / 2, height + half, width + thickness, thickness, wallOptions),
+      Bodies.rectangle(width / 2, -half, width + thickness, thickness, wallOptions),
+      Bodies.rectangle(-half, height / 2, thickness, height + thickness, wallOptions),
+      Bodies.rectangle(width + half, height / 2, thickness, height + thickness, wallOptions)
+    ];
+    newWalls.forEach((body) => walls.push(body));
+    Composite.add(world, newWalls);
+  }
+
+  const overlayItems = [];
+  const stageStyles = getComputedStyle(stage);
+  const strokeColor = stageStyles.getPropertyValue('--fg') || '#0b0b0c';
 
   const shapeData = [
     { text: 'Design' },
@@ -158,7 +174,7 @@ function mountAnimationDemo() {
     { text: 'Explore' }
   ];
 
-  const imageData = [
+  const iconData = [
     {
       src: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9IiMwMDAwRkYiLz48cGF0aCBkPSJNMjAgNzVMMjAgMjVNMjAgNzVMODAgNzVNMzUgNjBMMzUgNDBNNTAgNjBMNTAgMzBNNjUgNjBMNjUgNDUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMyIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIi8+PGNpcmNsZSBjeD0iMzUiIGN5PSI0MCIgcj0iNCIgZmlsbD0id2hpdGUiLz48Y2lyY2xlIGN4PSI1MCIgY3k9IjMwIiByPSI0IiBmaWxsPSJ3aGl0ZSIvPjxjaXJjbGUgY3g9IjY1IiBjeT0iNDUiIHI9IjQiIGZpbGw9IndoaXRlIi8+PHBhdGggZD0iTTM1IDQwTDUwIDMwTTUwIDMwTDY1IDQ1IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiLz48Y2lyY2xlIGN4PSI1NSIgY3k9IjQ1IiByPSIxMiIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIzIiBmaWxsPSJub25lIi8+PHBhdGggZD0iTTYzIDM4TDcyIDI5TTcyIDI5TDc1IDMyTTcyIDI5TDY5IDI2IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==',
       width: 60,
@@ -170,90 +186,88 @@ function mountAnimationDemo() {
       height: 60
     },
     {
-      src: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9IiMwMDAwRkYiLz48cGF0aCBkPSJNNTAgMjBDNDUgMjUgNDAgMzUgNDAgNDVDNDAgNTUgNDUgNjAgNTAgNjVDNTUgNjAgNjAgNTUgNjAgNDVDNjAgMzUgNTUgMjUgNTAgMjBaIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjMiIGZpbGw9Im5vbmUiLz48Y2lyY2xlIGN4PSI1MCIgY3k9IjM1IiByPSI1IiBmaWxsPSJ3aGl0ZSIvPjxwYXRoIGQ9Ik40MCA0NUwzNSA1NUwzOCA1NVoiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMyIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik02MCA0NUw2NSA1NUw2MiA1NVoiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMyIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik00NSA2NUw0MCA3MEM0MCA3NSA0NSA3OCA1MCA3OEM1NSA3OCA2MCA3NSA2MCA3MEw1NSA2NSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIzIiBmaWxsPSJub25lIi8+PHBhdGggZD0iTTQ1IDY1SDU1IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0zNSA3MEMzMiA3MiAzMCA3NSAzMiA3N0MzNCA3OSAzNyA3NyA0MCA3NSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIGZpbGw9Im5vbmUiLz48cGF0aCBkPSJNNjUgNzBDNjggNzIgNzAgNzUgNjggNzdDNjYgNzkgNjMgNzcgNjAgNzUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBmaWxsPSJub25lIi8+PHBhdGggZD0iTTQ1IDcyTDQ3IDc1TTUwIDcyTDUwIDc2TTU1IDcyTDUzIDc1IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==',
+      src: 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgdmlld0JveD0iMCAwIDEwMCAxMDAiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+PGNpcmNsZSBjeD0iNTAiIGN5PSI1MCIgcj0iNTAiIGZpbGw9IiMwMDAwRkYiLz48cGF0aCBkPSJNNTAgMjBDNDUgMjUgNDAgMzUgNDAgNDVDNDAgNTUgNDUgNjAgNTAgNjVDNTUgNjAgNjAgNTUgNjAgNDVDNjAgMzUgNTUgMjUgNTAgMjBaIiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjMiIGZpbGw9Im5vbmUiLz48Y2lyY2xlIGN4PSI1MCIgY3k9IjM1IiByPSI1IiBmaWxsPSJ3aGl0ZSIvPjxwYXRoIGQ9Ik40MCA0NUwzNSA1NUwzOCA1NVoiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMyIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik02MCA0NUw2NSA1NUw2MiA1NVoiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMyIgZmlsbD0ibm9uZSIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCIvPjxwYXRoIGQ9Ik00NSA2NUw0MCA3MEM0MCA3NSA0NSA3OCA1MCA3OEM1NSA3OCA2MCA3NSA2MCA3MEw1NSA2NSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIzIiBmaWxsPSJub25lIi8+PHBhdGggZD0iTTQ1IDY1SDU1IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjMiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjxwYXRoIGQ9Ik0zNSA3MEMzMiA3MiAzMCA3NSAzMiA3N0MzNCA3OSA0MCA3NyA0MCA3NSIgc3Ryb2tlPSJ3aGl0ZSIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIGZpbGw9Im5vbmUiLz48cGF0aCBkPSJNNjUgNzBDNjggNzIgNzAgNzUgNjggNzdDNjYgNzkgNjMgNzcgNjAgNzUiIHN0cm9rZT0id2hpdGUiIHN0cm9rZS13aWR0aD0iMiIgc3Ryb2tlLWxpbmVjYXA9InJvdW5kIiBmaWxsPSJub25lIi8+PHBhdGggZD0iTTQ1IDcyTDQ3IDc1TTUwIDcyTDUwIDc2TTU1IDcyTDUzIDc1IiBzdHJva2U9IndoaXRlIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIvPjwvc3ZnPg==',
       width: 60,
       height: 60
     }
   ];
 
-  const shapes = [];
-  const labels = [];
-  const images = [];
+  function spawnTextBodies() {
+    shapeData.forEach((entry) => {
+      const textWidth = entry.text.length * 10 + 40;
+      const body = Bodies.rectangle(
+        Math.random() * (width - 160) + 80,
+        Math.random() * (height * 0.6) + height * 0.2,
+        textWidth,
+        50,
+        {
+          chamfer: { radius: [0, 5, 10, 15, 20, 25][Math.floor(Math.random() * 6)] },
+          restitution: 0.9,
+          friction: 0.12,
+          density: 0.001,
+          render: {
+            fillStyle: 'transparent',
+            strokeStyle: strokeColor.trim() || '#0b0b0c',
+            lineWidth: 2
+          }
+        }
+      );
 
-  function getTextWidth(text) {
-    return text.length * 10 + 40;
+      const label = document.createElement('div');
+      label.className = 'shape-label';
+      label.textContent = entry.text;
+      overlay.appendChild(label);
+
+      Body.setVelocity(body, {
+        x: (Math.random() - 0.5) * 2.4,
+        y: (Math.random() - 0.5) * 2.4
+      });
+      Body.setAngularVelocity(body, (Math.random() - 0.5) * 0.25);
+
+      overlayItems.push({ body, el: label });
+      Composite.add(world, body);
+    });
   }
 
-  const spawnRangeY = Math.max(height * 0.55, 220);
-  const spawnBaseY = Math.max(height * 0.1, 60);
+  function spawnIconBodies() {
+    iconData.forEach((entry) => {
+      const body = Bodies.rectangle(
+        Math.random() * (width - 160) + 80,
+        Math.random() * (height * 0.6) + height * 0.2,
+        entry.width,
+        entry.height,
+        {
+          chamfer: { radius: entry.height / 2 },
+          restitution: 0.9,
+          friction: 0.1,
+          density: 0.001,
+          render: { fillStyle: 'transparent', strokeStyle: 'transparent', lineWidth: 0 }
+        }
+      );
 
-  shapeData.forEach((data) => {
-    const x = Math.random() * (width - 200) + 100;
-    const y = spawnBaseY + Math.random() * spawnRangeY;
-    const w = getTextWidth(data.text);
-    const h = 50;
-    const cornerRadius = [0, 5, 10, 15, 20, 25][Math.floor(Math.random() * 6)];
+      const img = document.createElement('img');
+      img.className = 'shape-image';
+      img.src = entry.src;
+      img.alt = '';
+      img.width = entry.width;
+      img.height = entry.height;
+      img.style.width = entry.width + 'px';
+      img.style.height = entry.height + 'px';
+      overlay.appendChild(img);
 
-    const shape = Bodies.rectangle(x, y, w, h, {
-      chamfer: { radius: cornerRadius },
-      restitution: 0.9,
-      friction: 0.1,
-      density: 0.001,
-      render: {
-        fillStyle: 'transparent',
-        strokeStyle: getComputedStyle(stage).getPropertyValue('--fg') || '#000',
-        lineWidth: 2
-      }
+      Body.setVelocity(body, {
+        x: (Math.random() - 0.5) * 2.4,
+        y: (Math.random() - 0.5) * 2.4
+      });
+      Body.setAngularVelocity(body, (Math.random() - 0.5) * 0.25);
+
+      overlayItems.push({ body, el: img });
+      Composite.add(world, body);
     });
+  }
 
-    const label = document.createElement('div');
-    label.className = 'shape-label';
-    label.textContent = data.text;
-    overlay.appendChild(label);
-    labels.push(label);
-
-    Body.setVelocity(shape, {
-      x: (Math.random() - 0.5) * 2.5,
-      y: (Math.random() - 0.5) * 2.5
-    });
-    Body.setAngularVelocity(shape, (Math.random() - 0.5) * 0.3);
-
-    shapes.push(shape);
-    Composite.add(world, shape);
-  });
-
-  imageData.forEach((data) => {
-    const x = Math.random() * (width - 200) + 100;
-    const y = spawnBaseY + Math.random() * spawnRangeY;
-
-    const shape = Bodies.rectangle(x, y, data.width, data.height, {
-      chamfer: { radius: data.height / 2 },
-      restitution: 0.9,
-      friction: 0.1,
-      density: 0.001,
-      render: { fillStyle: 'transparent', strokeStyle: 'transparent', lineWidth: 0 }
-    });
-
-    Body.setVelocity(shape, {
-      x: (Math.random() - 0.5) * 2.5,
-      y: (Math.random() - 0.5) * 2.5
-    });
-    Body.setAngularVelocity(shape, (Math.random() - 0.5) * 0.3);
-
-    const img = document.createElement('img');
-    img.className = 'shape-image';
-    img.src = data.src;
-    img.alt = '';
-    img.width = data.width;
-    img.height = data.height;
-    img.style.width = data.width + 'px';
-    img.style.height = data.height + 'px';
-    overlay.appendChild(img);
-    images.push(img);
-
-    shapes.push(shape);
-    Composite.add(world, shape);
-  });
+  spawnTextBodies();
+  spawnIconBodies();
 
   const mouse = Mouse.create(render.canvas);
   const mouseConstraint = MouseConstraint.create(engine, {
@@ -264,43 +278,37 @@ function mountAnimationDemo() {
   render.mouse = mouse;
 
   Events.on(mouseConstraint, 'mousemove', (event) => {
-    const mousePos = event.mouse.position;
-    shapes.forEach((shape) => {
-      const dx = shape.position.x - mousePos.x;
-      const dy = shape.position.y - mousePos.y;
-      const distance = Math.sqrt(dx * dx + dy * dy);
-      if (distance < 150) {
+    const { x, y } = event.mouse.position;
+    overlayItems.forEach(({ body }) => {
+      const dx = body.position.x - x;
+      const dy = body.position.y - y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 140) {
         const force = 0.008;
-        const randomForce = { x: (Math.random() - 0.5) * force, y: (Math.random() - 0.5) * force };
-        Body.applyForce(shape, shape.position, randomForce);
-        Body.setAngularVelocity(shape, shape.angularVelocity + (Math.random() - 0.5) * 0.3);
+        Body.applyForce(body, body.position, {
+          x: (Math.random() - 0.5) * force,
+          y: (Math.random() - 0.5) * force
+        });
+        Body.setAngularVelocity(body, body.angularVelocity + (Math.random() - 0.5) * 0.2);
       }
     });
   });
 
-  const updateOverlays = () => {
-    for (let i = 0; i < shapeData.length; i++) {
-      const label = labels[i];
-      const shape = shapes[i];
-      label.style.left = shape.position.x + 'px';
-      label.style.top = shape.position.y + 'px';
-      label.style.transform = `translate(-50%, -50%) rotate(${shape.angle}rad)`;
-    }
-    for (let i = 0; i < imageData.length; i++) {
-      const img = images[i];
-      const shape = shapes[shapeData.length + i];
-      img.style.left = shape.position.x + 'px';
-      img.style.top = shape.position.y + 'px';
-      img.style.transform = `translate(-50%, -50%) rotate(${shape.angle}rad)`;
-    }
-  };
+  function updateOverlays() {
+    overlayItems.forEach(({ body, el }) => {
+      el.style.left = body.position.x + 'px';
+      el.style.top = body.position.y + 'px';
+      el.style.transform = `translate(-50%, -50%) rotate(${body.angle}rad)`;
+    });
+  }
 
   Events.on(engine, 'afterUpdate', updateOverlays);
   updateOverlays();
 
-  const resizeHandler = () => {
+  function syncRendererSize() {
     width = stage.clientWidth || stage.offsetWidth || width;
     height = stage.clientHeight || stage.offsetHeight || height;
+    if (!width || !height) return;
 
     render.options.width = width;
     render.options.height = height;
@@ -311,15 +319,10 @@ function mountAnimationDemo() {
     }
 
     if (render.bounds) {
-      render.bounds.max.x = width;
-      render.bounds.max.y = height;
       render.bounds.min.x = 0;
       render.bounds.min.y = 0;
-    } else {
-      render.options.bounds = {
-        min: { x: 0, y: 0 },
-        max: { x: width, y: height }
-      };
+      render.bounds.max.x = width;
+      render.bounds.max.y = height;
     }
 
     Render.lookAt(render, {
@@ -327,20 +330,17 @@ function mountAnimationDemo() {
       max: { x: width, y: height }
     });
 
-    Composite.remove(world, ground);
-    Composite.remove(world, ceiling);
-    Composite.remove(world, leftWall);
-    Composite.remove(world, rightWall);
+    rebuildWalls();
+  }
 
-    ground = Bodies.rectangle(width / 2, height + 25, width, 50, wallOptions);
-    ceiling = Bodies.rectangle(width / 2, -25, width, 50, wallOptions);
-    leftWall = Bodies.rectangle(-25, height / 2, 50, height, wallOptions);
-    rightWall = Bodies.rectangle(width + 25, height / 2, 50, height, wallOptions);
-    Composite.add(world, [ground, ceiling, leftWall, rightWall]);
-  };
+  syncRendererSize();
 
-  window.addEventListener('resize', resizeHandler, { passive: true });
-  resizeHandler();
+  const resizeObserver = 'ResizeObserver' in window ? new ResizeObserver(syncRendererSize) : null;
+  if (resizeObserver) {
+    resizeObserver.observe(stage);
+  } else {
+    window.addEventListener('resize', syncRendererSize, { passive: true });
+  }
 
   if (mouse.element) {
     mouse.element.removeEventListener('mousewheel', mouse.mousewheel);
