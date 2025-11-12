@@ -56,6 +56,21 @@ html[data-theme="dark"] {
   --elev: #121316; --border: #2a2e34; --accent: #8ab4ff; --accent-contrast: #0b0b0c;
 }
 
+/* In dark mode, match container surfaces to the page background */
+html[data-theme="dark"] .section--box,
+html[data-theme="dark"] .app {
+  --section-bg: transparent;
+  background: transparent;
+}
+
+@media (prefers-color-scheme: dark) {
+  html[data-theme="auto"] .section--box,
+  html[data-theme="auto"] .app {
+    --section-bg: transparent;
+    background: transparent;
+  }
+}
+
 /* ===== Reset ===== */
 *,*::before,*::after{box-sizing:border-box}
 html,body{height:100%;margin:0;font-family:var(--font-sans);background:var(--bg);color:var(--fg);line-height:1.5;-webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;overflow-x:hidden}
