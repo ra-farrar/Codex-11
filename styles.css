@@ -67,6 +67,20 @@ p,h1,h2,h3,h4,h5,h6{margin:0}
 .page{max-width:1100px;margin:0 auto;padding:24px 20px 64px}
 .section{background:var(--section-bg,transparent);color:var(--section-fg,var(--fg));border-radius:var(--section-radius,0px);padding:clamp(16px,3vw,28px);margin-block:clamp(10px,2vw,20px);border:var(--section-border,1px solid transparent)}
 
+/* In dark mode keep surface containers transparent so the background is continuous */
+html[data-theme="dark"] .section--box,
+html[data-theme="dark"] .section--cta {
+  --section-bg: transparent;
+  --section-border: 1px solid transparent;
+}
+@media (prefers-color-scheme: dark) {
+  html[data-theme="auto"] .section--box,
+  html[data-theme="auto"] .section--cta {
+    --section-bg: transparent;
+    --section-border: 1px solid transparent;
+  }
+}
+
 /* === Debug outlines (MOBILE system) ===
    Toggle with `D`. Nothing renders unless html[data-debug="1"] is set. */
 html[data-debug="1"] .section        { outline:2px dashed rgba(var(--ol-blue),.9); }
