@@ -81,6 +81,17 @@ function mountAnimationDemo() {
   const world = engine.world;
   world.gravity.y = 0.5;
 
+  function updateDebugInfo() {
+    const ratio = window.devicePixelRatio || 1;
+    const bodies = Composite.allBodies(world).length;
+    const debugLabel = [
+      `stage: ${Math.round(width)} × ${Math.round(height)} px`,
+      `pixelRatio: ${ratio.toFixed(2)}`,
+      `bodies: ${bodies}`
+    ].join('\n');
+    container.setAttribute('data-debug-info', debugLabel);
+  }
+
   const render = Render.create({
     element: container,
     engine,
@@ -114,6 +125,7 @@ function mountAnimationDemo() {
     leftWall = Bodies.rectangle(-25, height / 2, 50, height, wallOptions);
     rightWall = Bodies.rectangle(width + 25, height / 2, 50, height, wallOptions);
     Composite.add(world, [ground, ceiling, leftWall, rightWall]);
+    updateDebugInfo();
   }
 
   addBounds();
@@ -214,6 +226,8 @@ function mountAnimationDemo() {
     Composite.add(world, shape);
   });
 
+  updateDebugInfo();
+
   const mouse = Mouse.create(render.canvas);
   const mouseConstraint = MouseConstraint.create(engine, {
     mouse,
@@ -256,6 +270,7 @@ function mountAnimationDemo() {
 
   Events.on(engine, 'afterUpdate', updateOverlays);
   updateOverlays();
+  updateDebugInfo();
 
   const resizeHandler = () => {
     width = container.clientWidth || container.offsetWidth || width;
@@ -273,6 +288,7 @@ function mountAnimationDemo() {
     });
 
     addBounds();
+    updateDebugInfo();
   };
 
   window.addEventListener('resize', resizeHandler, { passive: true });
