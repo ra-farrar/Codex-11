@@ -149,7 +149,7 @@ html[data-debug="1"] #animation .animation-stage::after {
 
 /* ======== Animation ======== */
 #animation .animation-shell{
-  border:1px solid var(--border);
+  border:none;
   border-radius:18px;
   padding:clamp(12px,2vw,20px);
   background:var(--muted);
