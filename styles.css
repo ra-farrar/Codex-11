@@ -127,7 +127,20 @@ html[data-debug="1"] #animation .animation-stage::after {
 .marquee *{user-select:none}
 .marquee__track{display:flex;width:max-content;will-change:transform;animation:marquee var(--marquee-speed-s) linear infinite}
 .marquee__row{display:flex;flex-shrink:0}
-.marquee__track .marquee__item{padding-inline:1rem;font-weight:600;color:var(--section-fg,var(--fg));font-family:"Angkor","Inter Tight",system-ui,sans-serif;font-size:2.3rem;line-height:1}
+.marquee__row{gap:clamp(1rem,3vw,2.5rem)}
+.marquee__track .marquee__item{
+  display:inline-flex;
+  align-items:center;
+  column-gap:clamp(0.3rem,0.8vw,0.9rem);
+  flex-shrink:0;
+  font-weight:600;
+  color:var(--section-fg,var(--fg));
+  font-family:"Angkor","Inter Tight",system-ui,sans-serif;
+  font-size:2.3rem;
+  line-height:1;
+}
+.marquee__label{display:inline-flex;align-items:center}
+.marquee__separator{display:inline-flex;align-items:center;font-size:0.82em;letter-spacing:0}
 .section--marquee:hover{cursor:crosshair}
 @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
