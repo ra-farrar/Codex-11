@@ -175,13 +175,13 @@ html[data-debug="1"] #animation .animation-stage::after {
   inline-size:100%;
   max-inline-size:100%;
   height:clamp(220px,48vh,380px);
-  background:linear-gradient(135deg,rgba(255,255,255,0.4),rgba(255,255,255,0)) , var(--elev);
+  background:linear-gradient(135deg,rgba(255,255,255,0.4),rgba(255,255,255,0)) , var(--bg);
   border-radius:14px;
   overflow:hidden;
   cursor:crosshair;
 }
 html[data-theme="dark"] #animation .animation-stage{
-  background:linear-gradient(135deg,rgba(20,20,20,0.6),rgba(20,20,20,0)) , var(--muted);
+  background:linear-gradient(135deg,rgba(20,20,20,0.6),rgba(20,20,20,0)) , var(--bg);
 }
 #animation .animation-stage canvas{display:block}
 #animation .animation-overlay{
