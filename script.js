@@ -57,6 +57,7 @@ function toggleTheme() {
   const next = current === 'light' ? 'dark' : 'light';
   localStorage.setItem(THEME_KEY, next);
   applyTheme(next);
+  document.dispatchEvent(new CustomEvent('themechange', { detail: { theme: next } }));
 }
 if (toggle) {
   toggle.addEventListener('click', toggleTheme);
@@ -80,6 +81,12 @@ function mountAnimationDemo() {
   const engine = Engine.create();
   const world = engine.world;
   world.gravity.y = 0.5;
+
+  function getStrokeColor() {
+    const value = getComputedStyle(container).getPropertyValue('--shape-stroke') || '';
+    const trimmed = value.trim();
+    return trimmed || '#000';
+  }
 
   function updateDebugInfo() {
     const ratio = window.devicePixelRatio || 1;
@@ -182,7 +189,7 @@ function mountAnimationDemo() {
       density: 0.001,
       render: {
         fillStyle: 'transparent',
-        strokeStyle: getComputedStyle(container).getPropertyValue('--fg') || '#000',
+        strokeStyle: getStrokeColor(),
         lineWidth: 2
       }
     });
@@ -224,6 +231,16 @@ function mountAnimationDemo() {
     Composite.add(world, shape);
   });
 
+  function updateShapeStrokes() {
+    const color = getStrokeColor();
+    shapes.forEach((shape) => {
+      if (shape.render && shape.render.lineWidth > 0) {
+        shape.render.strokeStyle = color;
+      }
+    });
+  }
+
+  updateShapeStrokes();
   updateDebugInfo();
 
   const mouse = Mouse.create(render.canvas);
@@ -269,6 +286,11 @@ function mountAnimationDemo() {
   Events.on(engine, 'afterUpdate', updateOverlays);
   updateOverlays();
   updateDebugInfo();
+
+  const handleThemeChange = () => {
+    updateShapeStrokes();
+  };
+  document.addEventListener('themechange', handleThemeChange);
 
   const resizeHandler = () => {
     width = container.clientWidth || container.offsetWidth || width;

@@ -179,9 +179,16 @@ html[data-debug="1"] #animation .animation-stage::after {
   border-radius:14px;
   overflow:hidden;
   cursor:crosshair;
+  --shape-stroke: #0b0b0c;
 }
 html[data-theme="dark"] #animation .animation-stage{
   background:linear-gradient(135deg,rgba(20,20,20,0.6),rgba(20,20,20,0)) , var(--bg);
+  --shape-stroke: #ffffff;
+}
+@media (prefers-color-scheme: dark) {
+  html[data-theme="auto"] #animation .animation-stage {
+    --shape-stroke: #ffffff;
+  }
 }
 #animation .animation-stage canvas{display:block}
 #animation .animation-overlay{
