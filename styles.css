@@ -148,8 +148,34 @@ html[data-debug="1"] #animation .animation-stage::after {
 /* ======== Buttons ======== */
 .btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;padding:12px 18px;border-radius:var(--radius);border:2px solid var(--border);background:transparent;color:var(--fg);cursor:pointer;text-decoration:none;font-weight:600;transition:transform .06s ease,background .2s ease,color .2s ease,border-color .2s ease}
 .btn:active{transform:translateY(1px)}
-.btn--primary{background:var(--accent);color:var(--accent-contrast);border-color:transparent}
-.btn--primary:hover{filter:brightness(.96)}
+.btn--primary{
+  background:#001EFF;
+  color:#ffffff;
+  border:3px solid #000000;
+  box-shadow:4px 4px 0 #000000;
+  font-family:"Space Mono", monospace;
+  font-weight:700;
+  letter-spacing:0.18em;
+  text-transform:uppercase;
+}
+
+html[data-theme="dark"] .btn--primary {
+  border-color:#ffffff;
+  box-shadow:4px 4px 0 #ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  html[data-theme="auto"] .btn--primary {
+    border-color:#ffffff;
+    box-shadow:4px 4px 0 #ffffff;
+  }
+}
+.btn--primary:hover{
+  filter:brightness(1.05);
+}
+.btn--primary:active{
+  box-shadow:2px 2px 0 #000000;
+}
 .btn--ghost{
   border-color:#001EFF;
   padding:12px 18px;
