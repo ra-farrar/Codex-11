@@ -190,7 +190,11 @@ html[data-theme="dark"] .btn--primary:active {
 }
 
 /* ======== CTA ======== */
-.section--cta{text-align:center}
+.section--cta{
+  text-align:center;
+  padding-block:clamp(16px,3vw,28px);
+  padding-inline:calc(clamp(16px,3vw,28px)*1.6);
+}
 
 /* ======== Grids (Apps & Contact) ======== */
 .grid{display:grid;gap:16px}
