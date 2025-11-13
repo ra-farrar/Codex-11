@@ -123,11 +123,11 @@ html[data-debug="1"] #animation .animation-stage::after {
 
 /* ======== MARQUEE ======== */
 .section--marquee{padding:0}
-.marquee{overflow:hidden;white-space:nowrap;border-block:none;background:transparent;height:var(--marquee-h);display:flex;align-items:center;user-select:none}
+.marquee{position:relative;overflow:hidden;white-space:nowrap;border-block:none;background:transparent;display:flex;align-items:center;user-select:none}
 .marquee *{user-select:none}
-.marquee__track{display:inline-flex;will-change:transform;line-height:var(--marquee-h);font-size:calc(var(--marquee-h)*0.8);animation:marquee var(--marquee-speed-s) linear infinite}
-.marquee__row{display:inline-flex}
-.marquee__track .marquee__item{padding-inline:1rem;font-weight:600;color:var(--section-fg,var(--fg));font-family:"Angkor","Inter Tight",system-ui,sans-serif}
+.marquee__track{display:flex;width:max-content;will-change:transform;animation:marquee var(--marquee-speed-s) linear infinite}
+.marquee__row{display:flex;flex-shrink:0}
+.marquee__track .marquee__item{padding-inline:1rem;font-weight:600;color:var(--section-fg,var(--fg));font-family:"Angkor","Inter Tight",system-ui,sans-serif;font-size:2.3rem;line-height:1}
 .section--marquee:hover{cursor:crosshair}
 @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
