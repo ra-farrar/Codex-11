@@ -195,6 +195,9 @@ html[data-theme="dark"] .btn--primary:active {
   padding-block:clamp(16px,3vw,28px);
   padding-inline:calc(clamp(16px,3vw,28px)*1.6);
 }
+.section--cta .btn {
+  padding-inline: 18px;
+}
 
 /* ======== Grids (Apps & Contact) ======== */
 .grid{display:grid;gap:16px}
