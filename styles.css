@@ -184,6 +184,7 @@ html[data-debug="1"] #animation .animation-stage::after {
   color:#FD3938;
   border-color:#001EFF;
   filter:none;
+  box-shadow:4px 4px 0 #001EFF;
 }
 
 html[data-theme="dark"] .btn--ghost:hover {
@@ -197,6 +198,7 @@ html[data-theme="dark"] .section--cta .btn--primary:hover {
   color:#FD3938;
   border-color:#001EFF;
   filter:none;
+  box-shadow:4px 4px 0 #001EFF;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -211,6 +213,7 @@ html[data-theme="dark"] .section--cta .btn--primary:hover {
     color:#FD3938;
     border-color:#001EFF;
     filter:none;
+    box-shadow:4px 4px 0 #001EFF;
   }
 }
 
