@@ -169,6 +169,10 @@ html[data-debug="1"] #animation .animation-stage::after {
   padding:12px 18px;
 }
 
+.grid--contact .btn {
+  font-family:"Space Mono", monospace;
+}
+
 .btn--ghost:hover {
   background:#000000;
   color:#FD3938;
