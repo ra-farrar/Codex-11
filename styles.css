@@ -169,6 +169,10 @@ html[data-debug="1"] #animation .animation-stage::after {
 /* Divider */
 .divider{height:1px;background:linear-gradient(to right,transparent,var(--border),transparent);margin:24px 0}
 
+#footer {
+  text-align: center;
+}
+
 /* Theme toggle */
 .theme-toggle{position:sticky;top:12px;margin-left:auto;display:inline-flex;padding:8px 10px;font-size:var(--size-xs);border:1px solid var(--border);background:var(--elev);color:var(--fg);border-radius:8px}
 
