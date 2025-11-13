@@ -130,18 +130,16 @@ html[data-debug="1"] #animation .animation-stage::after {
 .marquee__track .marquee__item{
   display:inline-flex;
   align-items:center;
-  gap:clamp(0.5rem,1.4vw,1.5rem);
-  padding-inline:clamp(1.25rem,3vw,2.75rem);
+  padding-inline:clamp(0.25rem,0.6vw,0.55rem);
   font-weight:600;
   color:var(--section-fg,var(--fg));
   font-family:"Angkor","Inter Tight",system-ui,sans-serif;
   font-size:2.3rem;
   line-height:1;
 }
-.marquee__track .marquee__item::after{
-  content:"◈";
-  display:block;
-  font-size:0.9em;
+.marquee__item--icon{
+  font-family:"Space Mono","Inter Tight",system-ui,sans-serif;
+  font-size:1.15em;
   letter-spacing:0;
 }
 .section--marquee:hover{cursor:crosshair}
