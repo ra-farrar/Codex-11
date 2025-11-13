@@ -137,6 +137,11 @@ html[data-debug="1"] #animation .animation-stage::after {
   font-size:2.3rem;
   line-height:1;
 }
+.marquee__item--icon{
+  font-family:"Space Mono","Inter Tight",system-ui,sans-serif;
+  font-size:1.15em;
+  letter-spacing:0;
+}
 .section--marquee:hover{cursor:crosshair}
 @keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
