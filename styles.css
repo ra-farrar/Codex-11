@@ -169,6 +169,26 @@ html[data-debug="1"] #animation .animation-stage::after {
   padding:12px 18px;
 }
 
+.btn--ghost:hover {
+  background:#000000;
+  color:#FD3938;
+  border-color:#001EFF;
+}
+
+html[data-theme="dark"] .btn--ghost:hover {
+  background:#ffffff;
+  color:#FD3938;
+  border-color:#001EFF;
+}
+
+@media (prefers-color-scheme: dark) {
+  html[data-theme="auto"] .btn--ghost:hover {
+    background:#ffffff;
+    color:#FD3938;
+    border-color:#001EFF;
+  }
+}
+
 html[data-theme="dark"] .btn--primary {
   border-color:#ffffff;
   box-shadow:4px 4px 0 #ffffff;
