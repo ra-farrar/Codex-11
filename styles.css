@@ -169,6 +169,16 @@ html[data-debug="1"] #animation .animation-stage::after {
   padding:12px 18px;
 }
 
+html[data-theme="dark"] .btn--primary {
+  border-color:#ffffff;
+}
+
+@media (prefers-color-scheme: dark) {
+  html[data-theme="auto"] .btn--primary {
+    border-color:#ffffff;
+  }
+}
+
 /* ======== CTA ======== */
 .section--cta{text-align:center}
 
