@@ -130,7 +130,7 @@ html[data-debug="1"] #animation .animation-stage::after {
 .marquee__track .marquee__item{
   display:inline-flex;
   align-items:center;
-  padding-inline:clamp(1.25rem,3vw,2.75rem);
+  padding-inline:clamp(0.3125rem,0vw,0.675rem);
   font-weight:600;
   color:var(--section-fg,var(--fg));
   font-family:"Angkor","Inter Tight",system-ui,sans-serif;
