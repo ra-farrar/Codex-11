@@ -235,9 +235,14 @@ html[data-theme="dark"] .btn--primary:hover {
 }
 
 /* ======== CTA ======== */
-.section--cta{text-align:center}
+.section--cta{
+  text-align:center;
+  display:flex;
+  justify-content:center;
+}
 .section--cta .btn--primary{
   padding-inline:27px;
+  width:min(100%, clamp(240px, 45vw, 420px));
 }
 
 /* ======== Grids (Apps & Contact) ======== */
