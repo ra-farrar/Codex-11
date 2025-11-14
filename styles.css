@@ -83,14 +83,23 @@ html[data-theme="dark"] .section--cta {
 
 /* === Debug outlines (MOBILE system) ===
    Toggle with `D`. Nothing renders unless html[data-debug="1"] is set. */
+html[data-debug="1"] .page           { outline:2px dashed rgba(var(--ol-purple),.5); }
 html[data-debug="1"] .section        { outline:2px dashed rgba(var(--ol-blue),.9); }
 html[data-debug="1"] .header-fill    { outline:2px dashed rgba(var(--ol-green),.9); }
 html[data-debug="1"] .header-measure { outline:2px dashed rgba(var(--ol-purple),.9); }
+html[data-debug="1"] .header-inner   { outline:2px dashed rgba(var(--ol-green),.6); }
 html[data-debug="1"] #subhead .subhead-box   { outline:2px dashed rgba(var(--ol-green),.9); }
 html[data-debug="1"] #subhead .subhead-arrow { outline:2px dashed rgba(var(--ol-orange),.9); }
+html[data-debug="1"] #subhead .subhead-row  { outline:2px dashed rgba(var(--ol-purple),.7); }
 html[data-debug="1"] .grid,
 html[data-debug="1"] .app,
 html[data-debug="1"] .btn             { outline:2px dashed rgba(var(--ol-orange),.6); }
+html[data-debug="1"] .custom-mount,
+html[data-debug="1"] #experienceMount { outline:2px dashed rgba(var(--ol-green),.9); }
+html[data-debug="1"] .marquee          { outline:2px dashed rgba(var(--ol-green),.85); }
+html[data-debug="1"] .marquee__track   { outline:2px dashed rgba(var(--ol-purple),.85); }
+html[data-debug="1"] .marquee__item    { outline:2px dashed rgba(var(--ol-orange),.7); }
+html[data-debug="1"] .divider          { outline:2px dashed rgba(var(--ol-purple),.6); }
 html[data-debug="1"] #animation .animation-shell { outline:2px dashed rgba(var(--ol-green),.9); }
 html[data-debug="1"] #animation .animation-stage { outline:2px dashed rgba(var(--ol-purple),.9); }
 html[data-debug="1"] #animation .animation-stage::after {
