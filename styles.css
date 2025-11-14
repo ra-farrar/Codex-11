@@ -190,26 +190,10 @@ html[data-debug="1"] #animation .animation-stage::after {
   border-color:#001EFF;
 }
 
-.section--cta .btn--primary:hover {
-  background:#000000;
-  color:#FD3938;
-  border-color:#001EFF;
-  filter:none;
-  box-shadow:4px 4px 0 #001EFF;
-}
-
 html[data-theme="dark"] .btn--ghost:hover {
   background:#ffffff;
   color:#FD3938;
   border-color:#001EFF;
-}
-
-html[data-theme="dark"] .section--cta .btn--primary:hover {
-  background:#ffffff;
-  color:#FD3938;
-  border-color:#001EFF;
-  filter:none;
-  box-shadow:4px 4px 0 #001EFF;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -217,14 +201,6 @@ html[data-theme="dark"] .section--cta .btn--primary:hover {
     background:#ffffff;
     color:#FD3938;
     border-color:#001EFF;
-  }
-
-  html[data-theme="auto"] .section--cta .btn--primary:hover {
-    background:#ffffff;
-    color:#FD3938;
-    border-color:#001EFF;
-    filter:none;
-    box-shadow:4px 4px 0 #001EFF;
   }
 }
 
