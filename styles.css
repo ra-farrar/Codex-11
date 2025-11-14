@@ -236,6 +236,10 @@ html[data-theme="dark"] .btn--primary:hover {
 
 /* ======== CTA ======== */
 .section--cta{text-align:center}
+.section--cta .btn--primary{
+  font-size:1.5em;
+  padding:18px 27px;
+}
 
 /* ======== Grids (Apps & Contact) ======== */
 .grid{display:grid;gap:16px}
