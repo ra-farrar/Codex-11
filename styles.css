@@ -169,6 +169,11 @@ html[data-debug="1"] #animation .animation-stage::after {
   letter-spacing:0.18em;
   text-transform:uppercase;
 }
+.section--cta .btn--primary {
+  font-size:1.25rem;
+  line-height:1;
+  padding-block:8px;
+}
 .btn--primary:hover{
   filter:brightness(1.05);
   transform:translateY(1px);
