@@ -170,9 +170,7 @@ html[data-debug="1"] #animation .animation-stage::after {
   text-transform:uppercase;
 }
 .section--cta .btn--primary {
-  font-size:1.25rem;
-  line-height:1;
-  padding-block:8px;
+  padding-inline:27px;
 }
 .btn--primary:hover{
   filter:brightness(1.05);
@@ -240,15 +238,7 @@ html[data-theme="dark"] .btn--primary:hover {
 }
 
 /* ======== CTA ======== */
-.section--cta{
-  text-align:center;
-  display:flex;
-  justify-content:center;
-}
-.section--cta .btn--primary{
-  padding-inline:27px;
-  width:min(100%, clamp(240px, 45vw, 420px));
-}
+.section--cta{text-align:center}
 
 /* ======== Grids (Apps & Contact) ======== */
 .grid{display:grid;gap:16px}
