@@ -121,6 +121,17 @@ html[data-debug="1"] #animation .animation-stage::after {
 .lead{font-size:clamp(1rem,2.4vw,var(--size-lg));color:var(--fg)}
 .body{font-size:var(--size-sm);color:var(--fg-muted)}
 
+#footer {
+  text-align: center;
+}
+
+.footer-logo {
+  margin-top: 20px;
+  height: 36px;
+  width: auto;
+  display: inline-block;
+}
+
 /* ======== MARQUEE ======== */
 .section--marquee{padding:0}
 .marquee{position:relative;overflow:hidden;white-space:nowrap;border-block:none;background:transparent;display:flex;align-items:center;user-select:none}

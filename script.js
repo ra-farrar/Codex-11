@@ -38,7 +38,13 @@
 // ========== Theme Handling (Light/Dark toggle only) ==========
 const root = document.documentElement;
 const toggle = document.getElementById('themeToggle');
+const footerLogo = document.getElementById('footerLogo');
 const THEME_KEY = 'theme-mode';
+
+function updateFooterLogo(mode) {
+  if (!footerLogo) return;
+  footerLogo.src = mode === 'dark' ? 'logo-white.svg' : 'logo-black.svg';
+}
 
 // Detect system preference once (used if no saved choice)
 const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matches;
@@ -46,6 +52,7 @@ const systemPrefersDark = window.matchMedia('(prefers-color-scheme: dark)').matc
 function applyTheme(mode) {
   root.setAttribute('data-theme', mode);
   if (toggle) toggle.textContent = mode.charAt(0).toUpperCase() + mode.slice(1);
+  updateFooterLogo(mode);
 }
 function getCurrentTheme() {
   const saved = localStorage.getItem(THEME_KEY);
