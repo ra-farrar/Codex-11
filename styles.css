@@ -171,6 +171,8 @@ html[data-debug="1"] #animation .animation-stage::after {
 }
 .btn--primary:hover{
   filter:brightness(1.05);
+  transform:translateY(1px);
+  box-shadow:2px 2px 0 #000000;
 }
 .btn--primary:active{
   box-shadow:2px 2px 0 #000000;
@@ -215,12 +217,20 @@ html[data-theme="dark"] .btn--primary {
     box-shadow:4px 4px 0 #ffffff;
   }
 
+  html[data-theme="auto"] .btn--primary:hover {
+    box-shadow:2px 2px 0 #ffffff;
+  }
+
   html[data-theme="auto"] .btn--primary:active {
     box-shadow:2px 2px 0 #ffffff;
   }
 }
 
 html[data-theme="dark"] .btn--primary:active {
+  box-shadow:2px 2px 0 #ffffff;
+}
+
+html[data-theme="dark"] .btn--primary:hover {
   box-shadow:2px 2px 0 #ffffff;
 }
 
